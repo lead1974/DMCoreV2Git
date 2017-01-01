@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using DMCoreV2.Models;
+using DMCoreV2.ViewModels;
+using DMCoreV2.DataAccess.Models;
 
-namespace DMCoreV2.Data
+namespace DMCoreV2.DataAccess
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class DMDbContext : IdentityDbContext<AuthUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public DMDbContext(DbContextOptions<DMDbContext> options)
             : base(options)
         {
         }

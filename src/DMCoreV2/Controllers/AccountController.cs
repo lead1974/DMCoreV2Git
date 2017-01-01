@@ -8,26 +8,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using DMCoreV2.Models;
-using DMCoreV2.Models.AccountViewModels;
+using DMCoreV2.ViewModels;
+using DMCoreV2.ViewModels.AccountViewModels;
 using DMCoreV2.Services;
+using DMCoreV2.DataAccess.Models;
 
 namespace DMCoreV2.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
+        private readonly UserManager<AuthUser> _userManager;
+        private readonly SignInManager<AuthUser> _signInManager;
+        private readonly IMailService _emailSender;
+        private readonly ISmsService _smsSender;
         private readonly ILogger _logger;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender,
-            ISmsSender smsSender,
+            UserManager<AuthUser> userManager,
+            SignInManager<AuthUser> signInManager,
+            IMailService emailSender,
+            ISmsService smsSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
@@ -105,7 +106,7 @@ namespace DMCoreV2.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new AuthUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -207,7 +208,7 @@ namespace DMCoreV2.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new AuthUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -446,7 +447,7 @@ namespace DMCoreV2.Controllers
             }
         }
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        private Task<AuthUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }

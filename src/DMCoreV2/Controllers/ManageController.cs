@@ -6,26 +6,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using DMCoreV2.Models;
-using DMCoreV2.Models.ManageViewModels;
+using DMCoreV2.ViewModels;
+using DMCoreV2.ViewModels.ManageViewModels;
 using DMCoreV2.Services;
+using DMCoreV2.DataAccess.Models;
 
 namespace DMCoreV2.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
+        private readonly UserManager<AuthUser> _userManager;
+        private readonly SignInManager<AuthUser> _signInManager;
+        private readonly IMailService _emailSender;
+        private readonly ISmsService _smsSender;
         private readonly ILogger _logger;
 
         public ManageController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IEmailSender emailSender,
-        ISmsSender smsSender,
+        UserManager<AuthUser> userManager,
+        SignInManager<AuthUser> signInManager,
+        IMailService emailSender,
+        ISmsService smsSender,
         ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
@@ -350,7 +351,7 @@ namespace DMCoreV2.Controllers
             Error
         }
 
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        private Task<AuthUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
         }

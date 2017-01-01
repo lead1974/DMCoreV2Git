@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace DMCoreV2.Services
 {
-    public interface IEmailSender
+    public interface ISmsService
     {
-        Task SendEmailAsync(string email, string subject, string message);
+        Task SendSmsAsync(string number, string message);
     }
 }

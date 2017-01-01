@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using DMCoreV2.Data;
-using DMCoreV2.Models;
 using DMCoreV2.Services;
+using DMCoreV2.DataAccess;
+using DMCoreV2.DataAccess.Models;
 
 namespace DMCoreV2
 {
@@ -45,18 +45,30 @@ namespace DMCoreV2
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<DMDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<AuthUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+
+                options.Cookies.ApplicationCookie.LoginPath = "/Account/Login";
+
+                options.SignIn.RequireConfirmedEmail = true;
+            })
+              .AddEntityFrameworkStores<DMDbContext>()
+              .AddDefaultTokenProviders();
 
             services.AddMvc();
 
             // Add application services.
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<IMailService, MailService>();
+            services.AddTransient<ISmsService, MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,6 +98,7 @@ namespace DMCoreV2
             
             app.UseMvc(routes =>
             {
+                routes.MapRoute("areaRoute", "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

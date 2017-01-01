@@ -83,7 +83,6 @@ namespace DMCoreV2
             app.UseStaticFiles();
 
             app.UseIdentity();
-
             
             app.UseMvc(routes =>
             {

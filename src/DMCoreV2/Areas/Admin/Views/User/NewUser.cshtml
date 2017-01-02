@@ -1,0 +1,58 @@
+﻿@model DMCoreV2.Areas.Admin.ViewModels.UserNew
+
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@using DMCoreV2.DataAccess.Models
+@inject SignInManager<AuthUser> SignInManager
+
+<h1>New User</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <section>
+            <form asp-controller="User" asp-route-returnurl="/admin/index" method="post" class="form-horizontal">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Username" class="col-md-2 control-label" title="User Name"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Email" class="form-control" type="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="checkbox">
+                            <label asp-for="EmailConfirmed">
+                                <input asp-for="EmailConfirmed" />
+                                @Html.DisplayNameFor(m => m.EmailConfirmed)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" class="btn btn-primary"> Create User</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+

@@ -14,6 +14,7 @@ namespace DMCoreV2.DataAccess
         public DMDbContext(DbContextOptions<DMDbContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

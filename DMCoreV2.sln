@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BC8A7C7E-6FC3-4BC2-8355-56FA1F7F58B0}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
+		WebEssentials2015-Settings.json = WebEssentials2015-Settings.json
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "DMCoreV2", "src\DMCoreV2\DMCoreV2.xproj", "{C6ED6FEB-27D5-4580-88C7-505130B5E9C1}"

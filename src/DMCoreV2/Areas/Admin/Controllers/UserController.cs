@@ -76,9 +76,8 @@ namespace DMCoreV2.Areas.Admin.Controllers
                     user.Email = form.Email;
                     user.EmailConfirmed = form.EmailConfirmed;
                     user.NormalizedEmail = form.Email.ToUpper();
-                    user.PasswordHash = form.Password;
-
-                    await _userManager.CreateAsync(user);
+  
+                    await _userManager.CreateAsync(user, form.Password);
 
                     if (string.IsNullOrWhiteSpace(returnUrl))
                     {
@@ -101,21 +100,40 @@ namespace DMCoreV2.Areas.Admin.Controllers
 
             return View(new UserEdit
             {
+                Id = Id,
                 Username = user.UserName,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed
             });
         }
 
-        [HttpPost, Route("")]
-        public async Task<IActionResult> EditUser(UserEdit form, string returnUrl)
+        [HttpPost, Route("edituser")]
+        public async Task<IActionResult> EditUser(UserEdit form,  string returnUrl)
         {
+            var user = await _userManager.FindByIdAsync(form.Id);
+            var userByEmail = await _userManager.FindByEmailAsync(form.Email);
+            if (userByEmail!=null && userByEmail.Id != form.Id)
+            {
+                ModelState.AddModelError("", "User update failed: user with the same email already exist!");
+                return View();
+            }
+
+            if (user.UserName != form.Username)
+            {
+                var userByName = await _userManager.FindByNameAsync(form.Username);
+                if (userByName != null && userByName.Id != form.Id)
+                {
+                    ModelState.AddModelError("", "User update failed: user with the same User Name already exist!");
+                    return View();
+                }
+            }
+
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(form.Email);
                 if (user != null)
                 {
                     user.UserName = form.Username;
+                    user.Email = form.Email;
                     user.EmailConfirmed = form.EmailConfirmed;
                     await _userManager.UpdateAsync(user);
 
@@ -127,13 +145,13 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "User creation failed: email must be unique!");
+                    ModelState.AddModelError("", "User update failed: user not found!");
                 }
             }
             return View();
         }
 
-        [HttpPost, Route("")]
+        [HttpGet, Route("deleteuser")]
         public async Task<IActionResult> DeleteUser(string Id)
         {
             if (ModelState.IsValid)
@@ -145,20 +163,57 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 }
                 await _userManager.DeleteAsync(user);
             }
-            return View();
+            return RedirectToAction("Index", "User");
+        }
+
+        [HttpGet, Route("resetpassword")]
+        public async Task<ActionResult> ResetPassword(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return RedirectToAction("Index", "User");
+            }
+
+            return View(new UserResetPassword
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Password=string.Empty,
+                ConfirmPassword=string.Empty,
+                Code=string.Empty
+            });
         }
 
         [HttpPost, Route("resetpassword")]
-        public async Task<IActionResult> ResetPassword(string Id)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(UserResetPassword form)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(Id);
-                if (user == null)
-                {
-                    ModelState.AddModelError("", "User to delete not found!");
-                }
+                return View(form);
             }
+            var user = await _userManager.FindByEmailAsync(form.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                ModelState.AddModelError("", "User to reset password not found!");
+                return View();
+            }
+
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, code, form.Password);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("index", "User");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Reset Password failed: ");
+            }
+ 
             return View();
         }
     }

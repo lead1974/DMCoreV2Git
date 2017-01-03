@@ -19,13 +19,13 @@ namespace DMCoreV2.Areas.Admin.ViewModels
 
     public class UserNew
     {
-        [Required, MaxLength(128), DataType(DataType.Text)]
-        [StringLength(128, MinimumLength = 4, ErrorMessage = "User Name must be between 4 and 128 characters long")]
-        [Display(Name = "User Name")]
-        public string Username { get; set; }
-
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
 
         [Required, DataType(DataType.EmailAddress)]
         [StringLength(256, MinimumLength = 5, ErrorMessage = "Email Address must be between 4 and 256 characters long")]
@@ -39,11 +39,6 @@ namespace DMCoreV2.Areas.Admin.ViewModels
     public class UserEdit
     {
         public string Id { get; set; }
-        [Required, MaxLength(128), DataType(DataType.Text)]
-        [StringLength(128, MinimumLength = 4, ErrorMessage = "User Name must be between 4 and 128 characters long")]
-        [Display(Name = "User Name")]
-        public string Username { get; set; }
-
         [Required, DataType(DataType.EmailAddress)]
         [Display(Name = "Email Address")]
         public string Email { get; set; }
@@ -54,9 +49,6 @@ namespace DMCoreV2.Areas.Admin.ViewModels
 
     public class UserResetPassword
     {
-        [Display(Name = "User Name")]
-        public string Username { get; set; }
-
         [EmailAddress]
         public string Email { get; set; }
 

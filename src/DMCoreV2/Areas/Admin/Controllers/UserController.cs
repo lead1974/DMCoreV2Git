@@ -72,7 +72,7 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 if (await _userManager.FindByEmailAsync(form.Email) == null)
                 {
                     var user = new AuthUser();
-                    user.UserName = form.Username;
+                    user.UserName = form.Email;
                     user.Email = form.Email;
                     user.EmailConfirmed = form.EmailConfirmed;
                     user.NormalizedEmail = form.Email.ToUpper();
@@ -101,7 +101,6 @@ namespace DMCoreV2.Areas.Admin.Controllers
             return View(new UserEdit
             {
                 Id = Id,
-                Username = user.UserName,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed
             });
@@ -118,21 +117,11 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 return View();
             }
 
-            if (user.UserName != form.Username)
-            {
-                var userByName = await _userManager.FindByNameAsync(form.Username);
-                if (userByName != null && userByName.Id != form.Id)
-                {
-                    ModelState.AddModelError("", "User update failed: user with the same User Name already exist!");
-                    return View();
-                }
-            }
-
             if (ModelState.IsValid)
             {
                 if (user != null)
                 {
-                    user.UserName = form.Username;
+                    user.UserName = form.Email;
                     user.Email = form.Email;
                     user.EmailConfirmed = form.EmailConfirmed;
                     await _userManager.UpdateAsync(user);
@@ -145,7 +134,7 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "User update failed: user not found!");
+                    ModelState.AddModelError(string.Empty, "User update failed: user not found!");
                 }
             }
             return View();
@@ -159,7 +148,7 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 var user = await _userManager.FindByIdAsync(Id);
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "User to delete not found!");
+                    ModelState.AddModelError(string.Empty, "User to delete not found!");
                 }
                 await _userManager.DeleteAsync(user);
             }
@@ -178,7 +167,6 @@ namespace DMCoreV2.Areas.Admin.Controllers
 
             return View(new UserResetPassword
             {
-                Username = user.UserName,
                 Email = user.Email,
                 Password=string.Empty,
                 ConfirmPassword=string.Empty,

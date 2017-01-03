@@ -16,7 +16,7 @@ namespace DMCoreV2.Areas.Admin.Controllers
 {
     [Area("Admin")]    
     [Route("admin/[controller]")]
-    // [Authorize(Roles = "admin")]
+    // [Authorize(Roles = "admin")] 
     public class UserController:Controller
     {
         private readonly UserManager<AuthUser> _userManager;

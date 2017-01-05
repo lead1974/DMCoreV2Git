@@ -108,37 +108,44 @@ namespace DMCoreV2.Areas.Admin.Controllers
         }
 
         [HttpPost, Route("edituser")]
-        public async Task<IActionResult> EditUser(UserEdit form,  string returnUrl)
+        public async Task<IActionResult> EditUser(UserEdit form,  string returnUrl, string action)
         {
-            var user = await _userManager.FindByIdAsync(form.Id);
-            var userByEmail = await _userManager.FindByEmailAsync(form.Email);
-            if (userByEmail!=null && userByEmail.Id != form.Id)
+            if (action == "Edit")
             {
-                ModelState.AddModelError("", "User update failed: user with the same email already exist!");
+                var user = await _userManager.FindByIdAsync(form.Id);
+                var userByEmail = await _userManager.FindByEmailAsync(form.Email);
+                if (userByEmail != null && userByEmail.Id != form.Id)
+                {
+                    ModelState.AddModelError("", "User update failed: user with the same email already exist!");
+                    return View();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    if (user != null)
+                    {
+                        user.UserName = form.Email;
+                        user.Email = form.Email;
+                        user.EmailConfirmed = form.EmailConfirmed;
+                        await _userManager.UpdateAsync(user);
+
+                        if (string.IsNullOrWhiteSpace(returnUrl))
+                        {
+                            return RedirectToAction("Index", "User");
+                        }
+                        else { return Redirect(returnUrl); }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "User update failed: user not found!");
+                    }
+                }
                 return View();
             }
-
-            if (ModelState.IsValid)
+            else
             {
-                if (user != null)
-                {
-                    user.UserName = form.Email;
-                    user.Email = form.Email;
-                    user.EmailConfirmed = form.EmailConfirmed;
-                    await _userManager.UpdateAsync(user);
-
-                    if (string.IsNullOrWhiteSpace(returnUrl))
-                    {
-                        return RedirectToAction("Index", "User");
-                    }
-                    else { return Redirect(returnUrl); }
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "User update failed: user not found!");
-                }
+                return RedirectToAction("index", "user");
             }
-            return View();
         }
 
         [HttpGet, Route("deleteuser")]

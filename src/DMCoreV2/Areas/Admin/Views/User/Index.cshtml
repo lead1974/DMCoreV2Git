@@ -6,7 +6,7 @@
     <a asp-action="NewUser" asp-route-returnurl="@ViewData["ReturnUrl"]" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Create User</a>
 </div>
 
-<div class="row">
+@*<div class="row">
     <div class="col-md-12">
         <section>
             <form asp-controller="User" asp-route-returnurl="/admin/index" method="post" class="form-horizontal">
@@ -43,7 +43,7 @@
             </form>
         </section>
     </div>
-</div>
+</div>*@
 
 <table id="users" class="table table-bordered table-hover">
     <thead>
@@ -80,7 +80,7 @@
                     {
                         data: "id",
                         render: function (data, type, user) {
-                            return "<button class='btn bth-xs btn-danger js-delete' data-user-id=" + data + " data-user-email=" + user.email + ">Delete</button>";
+                            return "<button class='btn bth-xs btn-danger js-delete' data-user-id=" + data + " data-user-email=" + user.email + "><i class='glyphicon glyphicon-remove'></i> Delete</button>";
                         }
                     }
                 ]

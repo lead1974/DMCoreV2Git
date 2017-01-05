@@ -97,6 +97,7 @@ namespace DMCoreV2.Areas.Admin.Controllers
         public async Task<IActionResult> EditUser(string Id)
         {
             var user = await _userManager.FindByIdAsync(Id);
+            if (user == null) RedirectToAction("index", "user");
 
             return View(new UserEdit
             {

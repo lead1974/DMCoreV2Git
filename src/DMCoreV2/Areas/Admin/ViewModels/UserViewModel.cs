@@ -43,7 +43,7 @@ namespace DMCoreV2.Areas.Admin.ViewModels
         [Display(Name = "Email Address")]
         public string Email { get; set; }
 
-        [Display(Name = "Email Confirmed")]
+        [Display(Name = "Email Confirmed?")]
         public bool EmailConfirmed { get; set; }
     }
 

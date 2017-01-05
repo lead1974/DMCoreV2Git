@@ -237,6 +237,7 @@
 --resource:"C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\obj\Debug\netcoreapp1.0\DMCoreV2dotnet-compile.deps.json",DMCoreV2.deps.json
 C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\Program.cs
 C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\Startup.cs
+C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\api\UserController.cs
 C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\Areas\Admin\Controllers\UserController.cs
 C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\Areas\Admin\ViewModels\UserViewModel.cs
 C:\Andrey\Notes\VF\WebApps\labweb\DMCoreV2\src\DMCoreV2\Controllers\AccountController.cs

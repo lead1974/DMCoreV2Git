@@ -12,6 +12,23 @@ namespace DMCoreV2.Areas.Admin.ViewModels
     {
     }
 
+    public class RoleCheckBox
+    {
+        public string Id { get; set; }
+        public bool IsChecked { get; set; }
+        public string Name { get; set; }
+    }
+    public class UserJquery
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string Roles { get; set; }
+    }
+    public class UserIndexJquery
+    {
+        public IEnumerable<UserJquery> Users { get; set; }
+    }
     public class UserIndex
     {
         public IEnumerable<AuthUser> Users { get; set; }
@@ -19,6 +36,7 @@ namespace DMCoreV2.Areas.Admin.ViewModels
 
     public class UserNew
     {
+        public IList<RoleCheckBox> CheckBoxRoles { get; set; }
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
 
@@ -38,8 +56,11 @@ namespace DMCoreV2.Areas.Admin.ViewModels
 
     public class UserEdit
     {
+        public IList<RoleCheckBox> CheckBoxRoles { get; set; }
         public string Id { get; set; }
-        [Required, DataType(DataType.EmailAddress)]
+
+        [Required]
+        [DataType(DataType.EmailAddress)]
         [Display(Name = "Email Address")]
         public string Email { get; set; }
 

@@ -1,0 +1,41 @@
+﻿@model DMCoreV2.Areas.Admin.ViewModels.RoleEdit
+
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@using DMCoreV2.DataAccess.Models
+@inject SignInManager<AuthUser> SignInManager
+
+<h1>Edit Role</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <section>
+            <form asp-controller="Role" asp-route-returnurl="@ViewBag.ReturnUrl" method="post" class="form-horizontal">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input asp-for="Id" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="Name" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Name" class="form-control" type="text" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Description" class="form-control" type="text" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" value='Edit' name='action' class="btn btn-primary"> Edit Role</button>
+                            <button type="submit" value='Cancel' name='action' class="btn btn-default"> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+

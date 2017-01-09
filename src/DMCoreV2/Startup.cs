@@ -48,7 +48,7 @@ namespace DMCoreV2
             services.AddDbContext<DMDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<AuthUser, IdentityRole>(options =>
+            services.AddIdentity<AuthUser, AuthRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = false;

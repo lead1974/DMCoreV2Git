@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using DMCoreV2.DataAccess;
 using DMCoreV2.DataAccess.Models;
 using Microsoft.Extensions.Logging;
-
-// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+using DMCoreV2.Areas.Admin.ViewModels;
+using DMCoreV2.Services;
 
 namespace DMCoreV2.api
 {
@@ -17,48 +17,77 @@ namespace DMCoreV2.api
     {
         private readonly UserManager<AuthUser> _userManager;
         private readonly SignInManager<AuthUser> _signInManager;
+        private readonly RoleManager<AuthRole> _roleManager;
         private readonly ILogger _logger;
 
-        private DMDbContext _dmDbContext;
+        private DMDbContext _dmDbContext;        
 
         public UserController(
             DMDbContext dmContext,
             UserManager<AuthUser> userManager,
             SignInManager<AuthUser> signInManager,
+            RoleManager<AuthRole> roleManager,
             ILoggerFactory loggerFactory)
         {
             _dmDbContext = dmContext;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = loggerFactory.CreateLogger<UserController>();
         }
 
         // GET: api/values
         [HttpGet]
-        public IQueryable<AuthUser> Get()
+        public async Task<IList<UserJquery>> Get()
         {
-            return _dmDbContext.Users;
+            var authUsers = _dmDbContext.Users;
+            var users = authUsers.Select(u => new UserJquery
+            {
+                Id = u.Id,
+                Email = u.Email,
+                EmailConfirmed = u.EmailConfirmed
+            }).ToList();
+
+            //Populate Roles for User
+            foreach (var user in users)
+            {
+                var userRoles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(user.Id));
+                user.Roles = string.Join(", ", userRoles);
+            }
+
+            return users;
+        }
+
+        private async Task<string> GetUserRoles(AuthUser u)
+        {
+            return string.Join(", ", await _userManager.GetRolesAsync(u));
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public AuthUser Get(string email)
+        public AuthUser Get(string id)
         {
-            return _dmDbContext.Users.Where(u => u.Email == email).FirstOrDefault();
+            return _dmDbContext.Users.Where(u => u.Id==id).FirstOrDefault();
         }
 
         // POST api/values
         [HttpPost]
-        public async Task<AuthUser> Post(string email, [FromBody]AuthUser authUser)
+        public async Task<IActionResult> Post(string email, [FromBody]AuthUser authUser)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return null;
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null) return null;
 
-            authUser.Email = user.Email;
-            authUser.UserName = user.UserName;
-            authUser.EmailConfirmed = user.EmailConfirmed;
+                authUser.Email = user.Email;
+                authUser.UserName = user.UserName;
+                authUser.EmailConfirmed = user.EmailConfirmed;
 
-            return authUser;
+                await _userManager.CreateAsync(authUser);
+                return Created($"/api/user/{authUser.Email}", authUser.Email);
+            }
+
+            return BadRequest(ModelState);
         }
 
         // PUT api/values/5
@@ -71,12 +100,16 @@ namespace DMCoreV2.api
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return new ObjectResult("not found!");
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null) return BadRequest("User to delete not found!");
 
-            await _userManager.DeleteAsync(user);
+                await _userManager.DeleteAsync(user);
+                return Ok();
+            }
 
-            return Ok();
+            return BadRequest(ModelState);
         }
     }
 }

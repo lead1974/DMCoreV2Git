@@ -1,20 +1,27 @@
 ﻿@model DMCoreV2.Areas.Admin.ViewModels.UserIndex
 
+@using Microsoft.AspNetCore.Identity
+@using DMCoreV2.Areas.Admin.ViewModels
+@using DMCoreV2.DataAccess.Models
+
+@inject SignInManager<AuthUser> SignInManager
+@inject UserManager<AuthUser> UserManager
+@inject RoleManager<AuthRole> RoleManager
+
 <h1>Users</h1>
 
 <div class="btn-toolbar">
     <a asp-action="NewUser" asp-route-returnurl="@ViewData["ReturnUrl"]" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Create User</a>
 </div>
-
-@*<div class="row">
+<br/>
+<div class="row">
     <div class="col-md-12">
         <section>
             <form asp-controller="User" asp-route-returnurl="/admin/index" method="post" class="form-horizontal">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <table class="table table-striped">
+                <table id="authUser" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>Email</th>
                             <th>Email Confirmed</th>
                             <th>Roles</th>
@@ -25,15 +32,13 @@
                         @foreach (var user in Model.Users)
                         {
                             <tr>
-                                <td>@user.Id</td>
-                                <td>@user.Email</td>
+                                <td><a href="@Url.Action("EditUser",new { user.Id })" class="btn bth-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> @user.Email</a></td>
                                 <td>@user.EmailConfirmed</td>
-                                <td>{todo}</td>
+                                <td><b>@string.Join(", ", await @UserManager.GetRolesAsync(user))</b></td>
                                 <td>
                                     <div class="bt-group">
-                                        <a href="@Url.Action("EditUser",new { user.Id })" class="btn bth-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>
                                         <a href="@Url.Action("ResetPassword",new { user.Id })" class="btn bth-xs btn-default"><i class="glyphicon glyphicon-lock"></i> Reset Password</a>
-                                        <a href="@Url.Action("DeleteUser",new { user.Id })" class="btn bth-xs btn-danger" data-post="Are you sure you want to delete @user.UserName?"><i class="glyphicon glyphicon-remove"></i> Delete</a>
+                                        <a href="#" class="btn bth-xs btn-danger js-delete" data-user-id=@user.Id data-user-email=@user.Email ><i class="glyphicon glyphicon-remove"></i> Delete</a>
                                     </div>
                                 </td>
                             </tr>
@@ -43,13 +48,14 @@
             </form>
         </section>
     </div>
-</div>*@
+</div>
 
 <table id="users" class="table table-bordered table-hover">
     <thead>
         <tr>
             <th>Email</th>
             <th>Email Confirmed</th>
+            <th>Roles</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -58,8 +64,7 @@
 
 @section scripts
 {
-    <script>
-       
+    <script>      
 
         $(document).ready(function () {
             var table = $("#users").DataTable({
@@ -71,16 +76,23 @@
                     {
                         data: "email",
                         render: function(data, type, user) {
-                            return "<a href='/admin/user/edituser?id=" + user.id + "'>" + user.email + "</a>";
+                            return "<a href='/admin/user/edituser?id=" + user.id + "' class='btn bth-xs btn-primary'><i class='glyphicon glyphicon-edit'></i> " + user.email + "</a>";
                         }
                     },
                     {
                         data: "emailConfirmed"
                     },
                     {
+                        data: "roles",
+                        render: function(data, type, user) {
+                            return "<b>" + data + "</b>";
+                        }
+                    },
+                    {
                         data: "id",
                         render: function (data, type, user) {
-                            return "<button class='btn bth-xs btn-danger js-delete' data-user-id=" + data + " data-user-email=" + user.email + "><i class='glyphicon glyphicon-remove'></i> Delete</button>";
+                            return "<a href='/admin/user/resetpassword?Id=" + data + "' class='btn bth-xs btn-default'><i class='glyphicon glyphicon-lock'></i> Reset Password</a> <button class='btn bth-xs btn-danger js-delete' data-user-id=" + data + " data-user-email=" + user.email + "><i class='glyphicon glyphicon-remove'></i> Delete</button>";
+
                         }
                     }
                 ]
@@ -95,6 +107,31 @@
                                 method: "DELETE",
                                 success: function () {
                                     table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    })
+                .css({
+                    'font-weight': 'bold',
+                    'margin-top': function () {
+                        var w = $(window).height();
+                        var b = $(".modal-dialog").height();
+                        // should not be (w-h)/2
+                        var h = (w - b) / 2;
+                        return h + "px";
+                    }
+                });
+            });
+            $("#authUser").on("click", ".js-delete", function () {
+                var link = $(this);
+                bootbox
+                    .confirm("Are you sure you want to delete this user : " + link.attr("data-user-email") + "?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/user/" + link.attr("data-user-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(link.parents("tr")).remove().draw();
                                 }
                             });
                         }

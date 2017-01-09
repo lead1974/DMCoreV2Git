@@ -18,6 +18,7 @@
                     <label asp-for="Email" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
                         <input asp-for="Email" class="form-control" type="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -30,6 +31,32 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Roles to Assign</div>
+                            <div class="panel-body">
+
+                                <div class="col-md-offset-2 col-md-10">
+                                    <ul class="list-group">
+                                        @for (var i = 0; i < Model.CheckBoxRoles.Count; i++)
+                                        {
+                                            <li class="list-group-item">
+                                                @*<label asp-for="CheckBoxRoles[i].Name" class="col-md-2 control-label"></label>
+                                                    <input asp-for="CheckBoxRoles[i].Name" class="form-control" />*@
+                                                @Html.CheckBoxFor(r => r.CheckBoxRoles[i].IsChecked, Model.CheckBoxRoles[i].IsChecked)
+                                                @Html.LabelFor(r => r.CheckBoxRoles[i].Name, Model.CheckBoxRoles[i].Name)
+                                                @Html.HiddenFor(r => r.CheckBoxRoles[i].Id, Model.CheckBoxRoles[i].Id)
+                                                @Html.HiddenFor(r => r.CheckBoxRoles[i].Name, Model.CheckBoxRoles[i].Name)
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">

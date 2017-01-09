@@ -9,7 +9,7 @@ using DMCoreV2.DataAccess.Models;
 
 namespace DMCoreV2.DataAccess
 {
-    public class DMDbContext : IdentityDbContext<AuthUser>
+    public class DMDbContext : IdentityDbContext<AuthUser,AuthRole,string>
     {
         public DMDbContext(DbContextOptions<DMDbContext> options)
             : base(options)

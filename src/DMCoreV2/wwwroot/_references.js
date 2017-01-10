@@ -1,4 +1,6 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="admin/js/metismenu.js" />
+/// <reference path="admin/js/sb-admin-2.js" />
 /// <reference path="js/site.js" />
 /// <reference path="lib/bootbox.js/bootbox.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />

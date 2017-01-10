@@ -1,22 +1,36 @@
 ﻿@model DMCoreV2.Areas.Admin.ViewModels.RoleIndex
 
-<h1>Roles</h1>
+@{
+    ViewData["Title"] = "Role Maintenance";
+}
 
-<div class="btn-toolbar">
-    <a asp-action="NewRole" asp-route-returnurl="@ViewData["ReturnUrl"]" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Create Role</a>
+<div class="col-lg-12">
+    <h1 class="page-header">Roles</h1>
+    <div class="btn-toolbar">
+        <a asp-action="NewRole" asp-route-returnurl="@ViewData["ReturnUrl"]" class="btn btn-primary btn-lg"><i class="glyphicon glyphicon-plus"></i> Create Role</a>
+    </div>
+    <h4 />
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-group fa-fw"></i> Role Maintenance
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <table id="roles" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Role Name</th>
+                            <th>Role Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-<br />
-<table id="roles" class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th>Role Name</th>
-            <th>Role Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
 @section scripts
 {
     <script>
@@ -31,7 +45,7 @@
                 columns: [
                     {
                         data: "name",
-                        render: function(data, type, role) {
+                        render: function (data, type, role) {
                             return "<a href='/admin/role/editrole?id=" + role.id + "' class='btn bth-xs btn-primary'><i class='glyphicon glyphicon-edit'></i> " + role.name + "</a>";
                         }
                     },

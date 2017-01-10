@@ -91,7 +91,8 @@
                     {
                         data: "id",
                         render: function (data, type, user) {
-                            return "<a href='/admin/user/resetpassword?Id=" + data + "' class='btn bth-xs btn-default'><i class='glyphicon glyphicon-lock'></i> Reset Password</a> <button class='btn bth-xs btn-danger js-delete' data-user-id=" + data + " data-user-email=" + user.email + "><i class='glyphicon glyphicon-remove'></i> Delete</button>";
+                            return "<a href='/admin/user/resetpassword?Id=" + data + "' class='btn bth-xs btn-default'><i class='glyphicon glyphicon-lock'></i> Reset Password</a> " +
+                                   "<button class='btn bth-xs btn-danger js-delete' data-user-id=" + data + " data-user-email=" + user.email + "><i class='glyphicon glyphicon-trash'></i> Delete</button>";
 
                         }
                     }

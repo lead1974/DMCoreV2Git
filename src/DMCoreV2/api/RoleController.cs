@@ -67,12 +67,6 @@ namespace DMCoreV2.api
             return BadRequest(ModelState);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
@@ -91,7 +85,31 @@ namespace DMCoreV2.api
                             await _userManager.RemoveFromRoleAsync(u, role.Name);
                         }
                     }
-                //await _roleManager.DeleteAsync(role);
+                await _roleManager.DeleteAsync(role);
+                return Ok();
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        // REMOVE api/values/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(string id)
+        {
+            if (ModelState.IsValid)
+            {
+                var role = await _roleManager.FindByIdAsync(id);
+                if (role == null) return BadRequest("Role to remove not found!");
+
+                //Remove All Users from current Role
+                var users = await _userManager.GetUsersInRoleAsync(role.Name);
+                if (users != null)
+                {
+                    foreach (var u in users)
+                    {
+                        await _userManager.RemoveFromRoleAsync(u, role.Name);
+                    }
+                }
                 return Ok();
             }
 

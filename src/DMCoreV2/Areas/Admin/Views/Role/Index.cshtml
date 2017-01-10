@@ -41,7 +41,8 @@
                     {
                         data: "id",
                         render: function (data, type, role) {
-                            return "<button class='btn bth-xs btn-danger js-delete' data-role-id=" + data + " data-role-name=" + role.name + "><i class='glyphicon glyphicon-remove'></i> Delete</button>";
+                            return "<button class='btn bth-xs btn-warning js-remove' data-role-id=" + data + " data-role-name=" + role.name + "><i class='glyphicon glyphicon-remove'></i> Remove All Users</button> " +
+                                   "<button class='btn bth-xs btn-danger js-delete' data-role-id=" + data + " data-role-name=" + role.name + "><i class='glyphicon glyphicon-trash'></i> Delete</button>"
                         }
                     }
                 ]
@@ -56,6 +57,31 @@
                                 method: "DELETE",
                                 success: function () {
                                     table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    })
+                .css({
+                    'font-weight': 'bold',
+                    'margin-top': function () {
+                        var w = $(window).height();
+                        var b = $(".modal-dialog").height();
+                        // should not be (w-h)/2
+                        var h = (w - b) / 2;
+                        return h + "px";
+                    }
+                });
+            });
+            $("#roles").on("click", ".js-remove", function () {
+                var button = $(this);
+                bootbox
+                    .confirm("Are you sure you want to remove all Users from this role : " + button.attr("data-role-name") + "?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/role/" + button.attr("data-role-id"),
+                                method: "PUT",
+                                success: function () {
+                                    bootbox.alert("Role was removed from All Users!");
                                 }
                             });
                         }

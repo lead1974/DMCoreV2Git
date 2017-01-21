@@ -17,6 +17,10 @@
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link href="~/lib/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet" />
+        <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+        <link href="~/admin/css/metisMenu.css" rel="stylesheet" />
+        <link href="~/admin/css/sb-admin-2.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
@@ -32,7 +36,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Administration - DealsMo.com</a>
+                <a class="navbar-brand" href="@Url.Action("index", "User", new { area = "admin" })">Administration - DealsMo.com</a>
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right">
@@ -100,7 +104,7 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                            <a href="@Url.Action("LogOff","Account", new { area = "" })"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -209,6 +213,18 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
+                        <li>
+                            <a href="#"><i class="fa fa-files-o fa-fw"></i> Blog Maintenance<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="@Url.Action("blogcategoryIndex","blogcategory")"> Categories</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("index","post")"> Posts</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -230,7 +246,6 @@
         <script src="~/lib/datatables/media/js/dataTables.bootstrap.js"></script>
         <script src="~/lib/bootbox.js/bootbox.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
-
         <script src="~/admin/js/metisMenu.js"></script>
         <script src="~/admin/js/sb-admin-2.js"></script>
     </environment>
@@ -243,7 +258,12 @@
                 asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
         </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/lib/datatables/media/js/jquery.dataTables.js"></script>
+        <script src="~/lib/datatables/media/js/dataTables.bootstrap.js"></script>
+        <script src="~/lib/bootbox.js/bootbox.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/admin/js/metisMenu.js"></script>
+        <script src="~/admin/js/sb-admin-2.js"></script>
     </environment>
 
     @RenderSection("scripts", required: false)

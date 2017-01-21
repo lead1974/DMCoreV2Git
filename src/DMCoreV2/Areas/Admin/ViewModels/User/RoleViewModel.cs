@@ -1,4 +1,6 @@
-﻿using DMCoreV2.DataAccess.Models;
+﻿using DMCoreV2.DataAccess.Models.User;
+using DMCoreV2.Services;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMCoreV2.Areas.Admin.ViewModels
+namespace DMCoreV2.Areas.Admin.ViewModels.User
 {
     public class RoleViewModel
     {

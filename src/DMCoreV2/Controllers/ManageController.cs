@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using DMCoreV2.ViewModels;
 using DMCoreV2.ViewModels.ManageViewModels;
 using DMCoreV2.Services;
-using DMCoreV2.DataAccess.Models;
+using DMCoreV2.DataAccess.Models.User;
 
 namespace DMCoreV2.Controllers
 {

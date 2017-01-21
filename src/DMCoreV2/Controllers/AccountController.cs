@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using DMCoreV2.ViewModels;
 using DMCoreV2.ViewModels.AccountViewModels;
 using DMCoreV2.Services;
-using DMCoreV2.DataAccess.Models;
+using DMCoreV2.DataAccess.Models.User;
 
 namespace DMCoreV2.Controllers
 {
@@ -48,6 +48,14 @@ namespace DMCoreV2.Controllers
             return View();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult LoginTop(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return PartialView("_LoginPartial");
+        }
+
         //
         // POST: /Account/Login
         [HttpPost]
@@ -56,6 +64,8 @@ namespace DMCoreV2.Controllers
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            if (model.Email == null) return RedirectToAction("login", "account");
+
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
@@ -95,6 +105,40 @@ namespace DMCoreV2.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginTop(string email, string password, bool rememberMe, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (email == null) return RedirectToAction("login", "account");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return RedirectToAction("login", "account");
+            }
+
+            if (ModelState.IsValid)
+            {
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                var result = await _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation(1, "User logged in.");
+                    return RedirectToLocal(returnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("login", "account");
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return RedirectToAction("index", "home");
         }
 
         //
@@ -140,8 +184,8 @@ namespace DMCoreV2.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
@@ -283,11 +327,11 @@ namespace DMCoreV2.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
-                //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                //   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
-                //return View("ForgotPasswordConfirmation");
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+                return View("ForgotPasswordConfirmation");
             }
 
             // If we got this far, something failed, redisplay form

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using DMCoreV2.DataAccess;
-using DMCoreV2.DataAccess.Models;
+using DMCoreV2.DataAccess.Models.User;
 using Microsoft.Extensions.Logging;
 
 namespace DMCoreV2.api

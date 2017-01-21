@@ -1,4 +1,5 @@
-﻿using DMCoreV2.DataAccess.Models;
+﻿using DMCoreV2.DataAccess.Models.User;
+using DMCoreV2.DataAccess.Models.Blog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,20 @@ namespace DMCoreV2.DataAccess.Repos
 
     public interface IUserRepository<T> : IEntityRepository<AuthUser>
     {
+    }
+    public interface IBlogRepository
+    {
+        IEnumerable<BlogPost> GetAllPosts();
+        IEnumerable<BlogCategory> GetAllBlogCategories();
+        IEnumerable<BlogPost> GetAllPostsWithComments();
+        IEnumerable<BlogPost> GetUserPostsWithComments(string userName);
+        void AddPost(BlogPost newPost);
+        void AddBlogCategory(BlogCategory newBlogCategory);
+        bool SaveAll();
+        BlogPost FindPostById(long Id);
+        BlogCategory FindBlogCategoryById(long Id);
+        BlogPost FindPostByName(string postName);
+        BlogCategory FindBlogCategoryByName(string blogCategoryName);
+        void AddComment(long postId, string username, BlogComment newComment);        
     }
 }

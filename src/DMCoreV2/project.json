@@ -45,7 +45,8 @@
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-    "MailKit": "1.10.1"
+    "MailKit": "1.10.1",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.1.0"
   },
 
   "tools": {
@@ -57,6 +58,7 @@
     "Microsoft.VisualStudio.Web.CodeGeneration.Tools": {
       "version": "1.0.0-preview2-final",
       "imports": [
+        "portable-net45+win8+dnxcore50",
         "portable-net45+win8"
       ]
     }

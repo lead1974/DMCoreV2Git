@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMCoreV2.DataAccess.Models
+namespace DMCoreV2.DataAccess.Models.User
 {
     public class AuthUser : IdentityUser
     {

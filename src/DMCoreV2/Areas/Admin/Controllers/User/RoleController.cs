@@ -1,6 +1,6 @@
-﻿using DMCoreV2.Areas.Admin.ViewModels;
+﻿using DMCoreV2.Areas.Admin.ViewModels.User;
 using DMCoreV2.DataAccess;
-using DMCoreV2.DataAccess.Models;
+using DMCoreV2.DataAccess.Models.User;
 using DMCoreV2.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,11 +12,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMCoreV2.Areas.Admin.Controllers
+namespace DMCoreV2.Areas.Admin.Controllers.User
 {
     [Area("Admin")]    
     [Route("admin/[controller]")]
-    // [Authorize(Roles = "admin")] 
+    [Authorize(Roles = RoleName.CanManageSite)]
     public class RoleController:Controller
     {
         private readonly UserManager<AuthUser> _userManager;

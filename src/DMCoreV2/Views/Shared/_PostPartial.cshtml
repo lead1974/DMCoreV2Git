@@ -1,0 +1,12 @@
+﻿@inject DMCoreV2.Services.GlobalService Format
+@model DMCoreV2.ViewModels.BlogViewModels.BlogPostViewModel
+
+<article class="blog-post">
+    <h1>@Model.Title</h1>
+    <div class="details">
+        Posted <span>@Format.AsReadableDate(Model.Posted)</span> by <span>@Model.Author</span>
+    </div>
+    <div class="content">
+        @Model.Body
+    </div>
+</article>

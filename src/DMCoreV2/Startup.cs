@@ -11,7 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using DMCoreV2.Services;
 using DMCoreV2.DataAccess;
-using DMCoreV2.DataAccess.Models;
+using DMCoreV2.DataAccess.Models.User;
+using Microsoft.AspNetCore.Http;
+using DMCoreV2.DataAccess.Repos;
 
 namespace DMCoreV2
 {
@@ -69,6 +71,8 @@ namespace DMCoreV2
             // Add application services.
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<ISmsService, MailService>();
+            services.AddTransient<GlobalService, GlobalService>();
+            services.AddScoped<IBlogRepository, BlogRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +82,7 @@ namespace DMCoreV2
             loggerFactory.AddDebug();
 
             app.UseApplicationInsightsRequestTelemetry();
+            app.UseExceptionHandler("/Home/Error");
 
             if (env.IsDevelopment())
             {
@@ -85,17 +90,19 @@ namespace DMCoreV2
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
-            else
+
+            app.Use(async (context, next) =>
             {
-                app.UseExceptionHandler("/Home/Error");
-            }
+                if (context.Request.Path.Value.Contains("invalid"))
+                    throw new Exception("ERROR!");
+                await next();
+            });
 
             app.UseApplicationInsightsExceptionTelemetry();
 
-            app.UseStaticFiles();
-
             app.UseIdentity();
-            
+
+            //app.UseStatusCodePagesWithRedirects("~/errors/{0}");
             app.UseMvc(routes =>
             {
                 routes.MapRoute("areaRoute", "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
@@ -103,6 +110,8 @@ namespace DMCoreV2
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.UseFileServer();
         }
     }
 }

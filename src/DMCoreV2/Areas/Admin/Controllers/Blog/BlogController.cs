@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 using static DMCoreV2.Areas.Admin.ViewModels.Blog.BlogCategoryViewModel;
 using static DMCoreV2.Areas.Admin.ViewModels.Blog.BlogPostViewModel;
 
-namespace DMCoreV2.Areas.Admin.Controllers
+namespace DMCoreV2.Areas.Admin.Controllers.Blog
 {
     [Area("Admin")]
     [Route("admin/[controller]")]
     [Authorize(Roles = RoleName.CanManageBlog)]
-    public class BlogPostController : Controller
+    public class BlogController : Controller
     {
         private readonly UserManager<AuthUser> _userManager;
         private readonly SignInManager<AuthUser> _signInManager;
@@ -34,7 +34,7 @@ namespace DMCoreV2.Areas.Admin.Controllers
         private const int PostsPerPage = 5;
         private GlobalService _globalService;
 
-        public BlogPostController(
+        public BlogController(
             IBlogRepository blogRepo,
             UserManager<AuthUser> userManager,
             SignInManager<AuthUser> signInManager,
@@ -51,11 +51,12 @@ namespace DMCoreV2.Areas.Admin.Controllers
             _emailSender = emailSender;
             _smsSender = smsSender;
             _globalService = globalService;
-            _logger = loggerFactory.CreateLogger<BlogPostController>();
+            _logger = loggerFactory.CreateLogger <BlogController>();
         }
 
-        [HttpGet, Route("")]
-        public IActionResult Index(int page =1)
+        #region Blog Posts 
+        [HttpGet, Route("blogPostIndex")]
+        public IActionResult BlogPostIndex(int page = 1)
         {
             var totalPostCount = _blogRepo.GetAllPosts().ToList().Count();
             var currentPostPage = _blogRepo.GetAllPosts()
@@ -66,21 +67,21 @@ namespace DMCoreV2.Areas.Admin.Controllers
 
             return View(new BlogPostIndex
             {
-                BlogPosts = new PageData<BlogPost>(currentPostPage, totalPostCount,page,PostsPerPage)
+                BlogPosts = new PageData<BlogPost>(currentPostPage, totalPostCount, page, PostsPerPage)
             });
         }
 
         [HttpGet, Route("blogpostform")]
         public IActionResult EditPost(string returnUrl, string action)
-        {          
+        {
             var post = new BlogPostForm
             {
                 IsNew = true
             };
-            return View("BlogPostForm",post);
+            return View("BlogPostForm", post);
         }
 
-        [HttpPost, Route("blogpostform"),ValidateAntiForgeryToken]
+        [HttpPost, Route("blogpostform"), ValidateAntiForgeryToken]
         public IActionResult Form(BlogPostForm form, string returnUrl, string action)
         {
             if (action == "CreatePost" || action == "UpdatePost")
@@ -126,9 +127,82 @@ namespace DMCoreV2.Areas.Admin.Controllers
                 _blogRepo.SaveAll();
             }
             else if (action == "Cancel")
-                return RedirectToAction("index", "blogpost");
+                return RedirectToAction("blogPostIndex", "blog");
 
-            return RedirectToAction("index", "blogpost");
-        } 
+            return RedirectToAction("blogPostIndex", "blog");
+        }
+# endregion Blog Posts
+
+        #region Blog Categories
+
+        [HttpGet, Route("blogCategoryIndex")]
+        public IActionResult BlogCategoryIndex(int page = 1)
+        {
+            var totalBlogCategoryCount = _blogRepo.GetAllBlogCategories().ToList().Count();
+            var currentBlogCategoryPage = _blogRepo.GetAllBlogCategories()
+                .OrderByDescending(c => c.Name)
+                .Skip((page - 1) * PostsPerPage)
+                .Take(PostsPerPage)
+                .ToList();
+
+            return View(new BlogCategoryIndex
+            {
+                BlogCategories = new PageData<BlogCategory>(currentBlogCategoryPage, totalBlogCategoryCount, page, PostsPerPage)
+            });
+        }
+
+        [HttpGet, Route("blogCategoryForm")]
+        public IActionResult BlogCategoryForm(string returnUrl, string action)
+        {
+            var category = new BlogCategoryForm
+            {
+                IsNew = true
+            };
+            return View("BlogCategoryForm", category);
+        }
+
+
+        [HttpPost, Route("blogCategoryForm"), ValidateAntiForgeryToken]
+        public IActionResult BlogCategoryForm(BlogCategoryForm form, string returnUrl, string action)
+        {
+            if (action == "CreateBlogCategory" || action == "UpdateBlogCategory")
+            {
+                form.IsNew = _globalService.IsNullOrDefault(form.Id);
+                if (!ModelState.IsValid) return View(form);
+
+                BlogCategory blogCategory;
+                if (form.IsNew)
+                {
+                    blogCategory = new BlogCategory
+                    {
+                        DateCreated = DateTime.UtcNow,
+                        Author = User.Identity.Name,
+                        CreatedBy = User.Identity.Name,
+                    };
+                }
+                else
+                {
+                    blogCategory = _blogRepo.FindBlogCategoryById(form.Id);
+                    if (blogCategory == null)
+                    {
+                        ModelState.AddModelError("", "Blog Category Update failed: Blog Category not found!");
+                    }
+
+                    blogCategory.DateUpdated = DateTime.UtcNow;
+                    blogCategory.UpdatedBy = User.Identity.Name;
+
+                }
+
+                blogCategory.Name = form.Name;
+
+                _blogRepo.AddBlogCategory(blogCategory);
+                _blogRepo.SaveAll();
+            }
+            else if (action == "Cancel")
+                return RedirectToAction("blogCategoryIndex", "blog");
+
+            return RedirectToAction("blogCategoryIndex", "blog");
+        }
+        #endregion Blog Categories
     }
 }

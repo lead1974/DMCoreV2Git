@@ -3,7 +3,8 @@
 @using System.Collections.Generic
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Http.Authentication
-@using DMCoreV2.DataAccess.Models
+@using DMCoreV2.DataAccess.Models.User
+@using DMCoreV2.DataAccess.Models.Blog
 @inject SignInManager<AuthUser> SignInManager
 
 @{
@@ -14,7 +15,7 @@
     <h1 class="page-header">@(Model.IsNew ? "Create Post" : "Update Post")</h1>
     <div class="row">
         <section>
-            <form asp-controller="BlogPost" asp-route-returnurl="@ViewBag.ReturnUrl" method="post" class="form-horizontal" asp-antiforgery="true" asp-area="admin">
+            <form asp-controller="Blog" asp-route-returnurl="@ViewBag.ReturnUrl" method="post" class="form-horizontal" asp-antiforgery="true" asp-area="admin">
                 <div class="col-lg-8">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <input asp-for="Id" type="hidden" />

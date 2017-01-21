@@ -3,7 +3,8 @@
 @using System.Collections.Generic
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Http.Authentication
-@using DMCoreV2.DataAccess.Models
+@using DMCoreV2.DataAccess.Models.User
+@using DMCoreV2.DataAccess.Models.Blog
 @inject SignInManager<AuthUser> SignInManager
 
 @{
@@ -69,7 +70,7 @@
             <tr class="@cls">
                 <td>@post.Title</td>
                 <td>@post.Author</td>
-                <td>@string.Join(", ", post.PostTags.Select(t => t.Tag.Name))</td>
+                <td>@string.Join(", ", post.BlogPostTags.Select(t => t.Tag.Name))</td>
                 <td>@post.DateToBePosted</td>
                 <td>
                     <a href="@Url.Action("edit", new { post.Id })" class="btn btn-btn-xs btn-primary">

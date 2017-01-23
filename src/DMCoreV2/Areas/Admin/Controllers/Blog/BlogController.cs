@@ -165,7 +165,7 @@ namespace DMCoreV2.Areas.Admin.Controllers.Blog
         [HttpPost, Route("blogCategoryForm"), ValidateAntiForgeryToken]
         public IActionResult BlogCategoryForm(BlogCategoryForm form, string returnUrl, string action)
         {
-            if (action == "CreateBlogCategory" || action == "UpdateBlogCategory")
+            if (action == "CreateCategory" || action == "UpdateCategory")
             {
                 form.IsNew = _globalService.IsNullOrDefault(form.Id);
                 if (!ModelState.IsValid) return View(form);
@@ -178,6 +178,7 @@ namespace DMCoreV2.Areas.Admin.Controllers.Blog
                         DateCreated = DateTime.UtcNow,
                         Author = User.Identity.Name,
                         CreatedBy = User.Identity.Name,
+                        Status = "N", // New
                     };
                 }
                 else
@@ -190,6 +191,7 @@ namespace DMCoreV2.Areas.Admin.Controllers.Blog
 
                     blogCategory.DateUpdated = DateTime.UtcNow;
                     blogCategory.UpdatedBy = User.Identity.Name;
+                    blogCategory.Status = "U"; // New
 
                 }
 

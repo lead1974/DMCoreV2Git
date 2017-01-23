@@ -14,7 +14,7 @@
 <h1>Blog Categories</h1>
 <div class="btn-toolbar">
     <div class="btn-group">
-        <a href="@Url.Action("blogCategoryForm")" class="btn btn-primary" btn-sm"><i class="glyphicon glyphicon-plus"></i> Blog Categories </a>
+        <a href="@Url.Action("blogCategoryForm")" class="btn btn-primary" btn-sm"><i class="glyphicon glyphicon-plus"></i> Create Category </a>
     </div>
 
     <div class="btn-group pull-right">
@@ -59,7 +59,7 @@
         @foreach (var cat in Model.BlogCategories)
         {
             var cls = "";
-            if (cat.Status.Contains("DELETED"))
+            if (cat.Status.Equals("D"))
             {
                 cls = "danger";
 
@@ -67,17 +67,17 @@
             <tr class="@cls">
                 <td>@cat.Name</td>
                 <td>
-                    <a href="@Url.Action("editBlogCategory", new { cat.Id })" class="btn btn-btn-xs btn-primary">
+                    <a href="@Url.Action("blogCategoryForm", new { cat.Id })" class="btn btn-btn-xs btn-primary">
                         <i class="glyphicon glyphicon-edit"></i> edit
                     </a>
 
-                    @if (!cat.Status.Contains("DELETED"))
+                    @if (!cat.Status.Contains("D"))
                     {
                     <div class="btn-group btn-group-xs">
-                        <a href="#" class="btn btn-danger">
+                        <a href="#" class="btn btn-danger btn-btn-xs">
                             <i class="glyphicon glyphicon-trash"></i> Trash
                         </a>
-                        <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                        <a href="#" class="btn btn-danger btn-btn-xs dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="#">
@@ -89,7 +89,7 @@
                     }
                     else
                     {
-                    <a href="#" class="btn btn-success">
+                    <a href="#" class="btn btn-btn-xs btn-success">
                         <i class="glyphicon glyphicon-plus-sign"></i> restore
                     </a>
                     }

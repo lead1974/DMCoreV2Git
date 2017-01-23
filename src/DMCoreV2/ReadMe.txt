@@ -22,4 +22,6 @@ To "unapply" the most (recent?) migration after it has already been applied to t
 4) Find the table named "dbo._EFMigrationsHistory". 
 5) Right click on it and select "View Data" to see the table entries in Visual Studio. 
 6) Delete the row corresponding to your migration that you want to unapply (Say "yes" to the warning, if prompted). 
-7) Run "dotnet ef migrations remove" again in the command window in the directory that has the project.json file                                                                                                                    
+7) Run "dotnet ef migrations remove" again in the command window in the directory that has the project.json file     
+
+Install Kendo-UI open command line: bower install https://bower.telerik.com/bower-kendo-ui.git enter credentials: aparahnevi@venturafoods.com / V3ntura!23                                                                                                               

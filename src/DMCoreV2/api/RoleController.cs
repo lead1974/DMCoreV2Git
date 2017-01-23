@@ -32,7 +32,7 @@ namespace DMCoreV2.api
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _logger = loggerFactory.CreateLogger<UserController>();
+            _logger = loggerFactory.CreateLogger<RoleController>();
         }
         // GET: api/values
         [HttpGet]
